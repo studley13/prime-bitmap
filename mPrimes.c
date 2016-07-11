@@ -79,12 +79,12 @@ void genPrimes(mem bitmap) {
     long long int check = 0;
     long long int multiple = 0;
     long long int dispCond = 1;
-    long long int maxBase = ceil(sqrt(PRIME_SIZE));
+    long long int maxBase = ceil(sqrt(bitmap.size));
 
     if (bitmap.fd >= 0) {
 
         // initialise data
-        for (check = 0; check < PRIME_SIZE; check++) {
+        for (check = 0; check < bitmap.size; check++) {
             if ((check % (sizeof(block) * 8)) == 0) {
                 flushBlock(bitmap, check, 1);
             }
@@ -115,7 +115,7 @@ void genPrimes(mem bitmap) {
                 }
                 #endif
 
-                for (multiple = check + check; multiple < PRIME_SIZE; multiple += check) {
+                for (multiple = check + check; multiple < bitmap.size; multiple += check) {
                     setBit(bitmap, multiple, 0);
                 }
             }
