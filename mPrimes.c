@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <math.h>
 
 #define FALSE 0
 #define TRUE (!FALSE)
@@ -78,6 +79,7 @@ void genPrimes(mem bitmap) {
     long long int check = 0;
     long long int multiple = 0;
     long long int dispCond = 1;
+    long long int maxBase = ceil(sqrt(PRIME_SIZE));
 
     if (bitmap.fd >= 0) {
 
@@ -100,7 +102,7 @@ void genPrimes(mem bitmap) {
         #endif
 
         // run seive
-        for (check = 0; check < PRIME_SIZE; check++) {
+        for (check = 0; check < maxBase; check++) {
             if ((check == 0) || (check == 1)) {
                 setBit(bitmap, check, 0);
             } else if (getBit(bitmap, check)) {
@@ -131,7 +133,7 @@ void genPrimes(mem bitmap) {
 void writeBitmap(mem bitmap) {
     long long int byteCount = (bitmap.size / 8) + !!(bitmap.size % 8);
 
-    if (bitmap >= 0) {
+    if (bitmap.fd >= 0) {
         lseek(bitmap.fd, 0, SEEK_SET);
         write(bitmap.fd, bitmap.data, byteCount);
     }
@@ -194,8 +196,8 @@ int getBit(mem bitmap, long long int index) {
     block bitData = 0;
 
     if (bitmap.fd >= 0) {
-        block byteData = bitmap.data[byte];
-        block bitData = (byteData >> bitOffset) & 0x1;
+        byteData = bitmap.data[byte];
+        bitData = (byteData >> bitOffset) & 0x1;
     }
 
     return !!bitData;

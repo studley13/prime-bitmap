@@ -1,7 +1,10 @@
 CC=clang
-CFLAGS=-Wall -Werror -O
+CFLAGS=-Wall -Werror -lm -O
 
 all:	mPrimes
+
+clean:
+	rm -rf mPrimes primes.map *.o
 
 mPrimes.o: mPrimes.c
 
