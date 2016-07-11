@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-Wall -Werror -O
+CFLAGS=-Wall -Werror -O3
 
 all:	mPrimes
 
