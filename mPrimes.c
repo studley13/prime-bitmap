@@ -53,13 +53,19 @@ mem openBitmap(char *file, size_t length) {
 
         newMemory.size = length;
         newMemory.data = malloc(byteLength);
+
+        if (newMemory.data == NULL) {
+            close(newMemory.fd);
+            newMemory.fd = -1;
+            newMemory.size = -1;
+        }
     }
 
     return newMemory;
 }
 
 void closeBitmap(mem memory) {
-    if (memory.fd > 0) {
+    if (memory.fd >= 0) {
         free(memory.data);
         memory.data = NULL;
         memory.size = -1;
@@ -73,7 +79,7 @@ void genPrimes(mem bitmap) {
     long long int multiple = 0;
     long long int dispCond = 1;
 
-    if (bitmap.fd > 0) {
+    if (bitmap.fd >= 0) {
 
         // initialise data
         for (check = 0; check < PRIME_SIZE; check++) {
@@ -125,8 +131,10 @@ void genPrimes(mem bitmap) {
 void writeBitmap(mem bitmap) {
     long long int byteCount = (bitmap.size / 8) + !!(bitmap.size % 8);
 
-    lseek(bitmap.fd, 0, SEEK_SET);
-    write(bitmap.fd, bitmap.data, byteCount);
+    if (bitmap >= 0) {
+        lseek(bitmap.fd, 0, SEEK_SET);
+        write(bitmap.fd, bitmap.data, byteCount);
+    }
 
     return;
 }
@@ -134,8 +142,10 @@ void writeBitmap(mem bitmap) {
 void readBitmap(mem bitmap) {
     long long int byteCount = (bitmap.size / 8) + !!(bitmap.size % 8);
 
-    lseek(bitmap.fd, 0, SEEK_SET);
-    read(bitmap.fd, bitmap.data, byteCount);
+    if (bitmap.fd >= 0) {
+        lseek(bitmap.fd, 0, SEEK_SET);
+        read(bitmap.fd, bitmap.data, byteCount);
+    }
 
     return;
 }
@@ -144,11 +154,13 @@ void flushBlock(mem bitmap, long long int index, unsigned char data) {
     block blockData = 0x0;
     long long int blockIndex = index / (sizeof(block) * 8);
 
-    if (data) {
-        blockData = ~0x0;
-    }
+    if (bitmap.fd >= 0) {
+        if (data) {
+            blockData = ~0x0;
+        }
 
-    bitmap.data[blockIndex] = blockData;
+        bitmap.data[blockIndex] = blockData;
+    }
 
     return;
 }
@@ -156,17 +168,21 @@ void flushBlock(mem bitmap, long long int index, unsigned char data) {
 void setBit(mem bitmap, long long int index, unsigned char data) {
     long long int blockIndex = index / (sizeof(block) * 8);
     short bitOffset = index % (sizeof(block) * 8);
+    block byteData;
+    block modifier;
 
-    block byteData = bitmap.data[blockIndex];
-    block modifier = (block)0x1 << bitOffset;
+    if (bitmap.fd >= 0) {
+        byteData = bitmap.data[blockIndex];
+        modifier = (block)0x1 << bitOffset;
 
-    if (data) {
-        byteData |= modifier;
-    } else {
-        byteData &= (~modifier);
+        if (data) {
+            byteData |= modifier;
+        } else {
+            byteData &= (~modifier);
+        }
+
+        bitmap.data[blockIndex] = byteData;
     }
-
-    bitmap.data[blockIndex] = byteData;
 
     return;
 }
@@ -174,9 +190,13 @@ void setBit(mem bitmap, long long int index, unsigned char data) {
 int getBit(mem bitmap, long long int index) {
     long long int byte = index / (sizeof(block) * 8);
     short bitOffset = index % (sizeof(block) * 8);
+    block byteData;
+    block bitData = 0;
 
-    block byteData = bitmap.data[byte];
-    block bitData = (byteData >> bitOffset) & 0x1;
+    if (bitmap.fd >= 0) {
+        block byteData = bitmap.data[byte];
+        block bitData = (byteData >> bitOffset) & 0x1;
+    }
 
     return !!bitData;
 }
