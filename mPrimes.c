@@ -78,7 +78,7 @@ void closeBitmap(mem memory) {
 void genPrimes(mem bitmap) {
     long long int check = 0;
     long long int multiple = 0;
-    long long int dispCond = 1024;
+    long long int dispCond = 1;
     long long int maxBase = ceil(sqrt(bitmap.size));
 
     if (bitmap.fd >= 0) {
@@ -108,9 +108,6 @@ void genPrimes(mem bitmap) {
             } else if (getBit(bitmap, check)) {
 
                 #ifdef VERBOSE
-                if (check < 1024) {
-                    fprintf(stderr, "Prime found: %12lld\n", check);
-                }
                 if (check > dispCond) {
                     fprintf(stderr, "\033[G\033[KPrime found: %12lld", check);
                     fflush(stderr);
