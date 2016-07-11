@@ -16,3 +16,5 @@ run: mPrimes
 
 time: mPrimes
 	/usr/bin/time -f "%U - User Time\n%S - System Time\n%P - Processor Utilisation" ./mPrimes
+
+check: mPrimes
