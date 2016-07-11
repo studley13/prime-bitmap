@@ -101,8 +101,8 @@ void genPrimes(mem bitmap) {
 
                 #ifdef VERBOSE
                 if (check > dispCond) {
-                    printf("\033[G\033[KPrime found: %12lld", check);
-                    fflush(stdout);
+                    fprintf(stderr, "\033[G\033[KPrime found: %12lld", check);
+                    fflush(stderr);
                     dispCond <<= 1;
                 }
                 #endif
