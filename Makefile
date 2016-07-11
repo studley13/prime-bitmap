@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-Wall -Werror -lm -O
+CFLAGS=-Wall -Werror -O
 
 all:	mPrimes
 
@@ -9,10 +9,10 @@ clean:
 mPrimes.o: mPrimes.c
 
 mPrimes: mPrimes.o
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -lm -o $@ $^
 
 run: mPrimes
 	./mPrimes
 
 time: mPrimes
-	/usr/bin/time ./mPrimes
+	/usr/bin/time -f "%U - User Time\n%S - System Time\n%P - Processor Utilisation" ./mPrimes
